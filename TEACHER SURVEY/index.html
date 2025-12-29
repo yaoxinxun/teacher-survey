@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小学教师评价体系专家函询表</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        
+        body {
+            background: #f5f7fa;
+            padding: 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #3498db;
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 22px;
+            line-height: 1.4;
+        }
+        
+        .header .subtitle {
+            color: #7f8c8d;
+            font-size: 15px;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        /* 步骤指示器 */
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .step-indicator::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 10%;
+            right: 10%;
+            height: 3px;
+            background: #ddd;
+            z-index: 1;
+        }
+        
+        .step {
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            flex: 1;
+        }
+        
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            background: #ecf0f1;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-weight: bold;
+            color: #7f8c8d;
+            border: 3px solid #ecf0f1;
+            transition: all 0.3s;
+        }
+        
+        .step.active .step-circle {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        
+        .step.completed .step-circle {
+            background: #27ae60;
+            color: white;
+            border-color: #27ae60;
+        }
+        
+        .step-label {
+            font-size: 14px;
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+        
+        .step.active .step-label {
+            color: #3498db;
+            font-weight: bold;
+        }
+        
+        /* 步骤内容区域 */
+        .step-content {
+            display: none;
+        }
+        
+        .step-content.active {
+            display: block;
+        }
+        
+        /* 导航按钮 */
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .nav-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .nav-btn.prev {
+            background: #95a5a6;
+            color: white;
+        }
+        
+        .nav-btn.next, .nav-btn.submit {
+            background: #3498db;
+            color: white;
+        }
+        
+        .nav-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* 表格样式 */
+        .questionnaire-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            font-size: 13px;
+            table-layout: fixed;
+        }
+        
+        .questionnaire-table th {
+            background: #2c3e50;
+            color: white;
+            padding: 14px 6px;
+            text-align: center;
+            font-weight: 600;
+            border: 1px solid #34495e;
+            vertical-align: middle;
+            line-height: 1.4;
+        }
+        
+        .questionnaire-table td {
+            padding: 12px 6px;
+            border: 1px solid #ddd;
+            vertical-align: top;
+            line-height: 1.5;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        
+        /* 列宽设置 */
+        .col-level1 { width: 120px; }
+        .col-level2 { width: 180px; }
+        .col-observation { width: 150px; }
+        .col-evaluation { width: 280px; }
+        .col-rating { width: 70px; }
+        .col-comment { width: 200px; }
+        
+        /* 指标分类样式 */
+        .level-1 {
+            background: #e8f4fc;
+            font-weight: bold;
+            color: #2c3e50;
+            text-align: center;
+            vertical-align: middle;
+        }
+        
+        .level-2 {
+            background: #f0f8ff;
+            font-weight: 600;
+            color: #34495e;
+            vertical-align: middle;
+        }
+        
+        .level-3 {
+            background: white;
+            color: #2c3e50;
+            vertical-align: middle;
+        }
+        
+        /* 评分选项样式 */
+        .rating-cell {
+            text-align: center;
+            vertical-align: middle;
+        }
+        
+        .rating-option {
+            display: block;
+            margin: 8px auto;
+            cursor: pointer;
+        }
+        
+        .rating-option input[type="radio"] {
+            transform: scale(1.2);
+            margin: 0;
+            cursor: pointer;
+        }
+        
+        .rating-label {
+            font-size: 11px;
+            color: #444;
+            text-align: center;
+            line-height: 1.3;
+            margin-top: 3px;
+            display: block;
+        }
+        
+        /* 修改意见 */
+        .comment-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 13px;
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+            line-height: 1.4;
+        }
+        
+        /* 专家信息部分 */
+        .expert-info-section {
+            margin-top: 20px;
+        }
+        
+        .expert-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+        
+        .form-group label.required::after {
+            content: " *";
+            color: #e74c3c;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        /* 权重部分 */
+        .weights-section {
+            margin-top: 20px;
+        }
+        
+        .stage-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+        
+        .stage-tab {
+            padding: 12px 24px;
+            background: #ecf0f1;
+            border-radius: 6px 6px 0 0;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s;
+            font-size: 14px;
+            border: 1px solid #ddd;
+            border-bottom: none;
+        }
+        
+        .stage-tab.active {
+            background: #3498db;
+            color: white;
+            font-weight: bold;
+            border-color: #2980b9;
+        }
+        
+        /* 权重表格 */
+        .weights-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
+        .weights-table th {
+            background: #34495e;
+            color: white;
+            padding: 12px;
+            text-align: center;
+            font-weight: 600;
+            border: 1px solid #2c3e50;
+        }
+        
+        .weights-table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            vertical-align: middle;
+        }
+        
+        .weight-input {
+            width: 120px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .weight-input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        .weight-summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            margin-top: 20px;
+            font-size: 15px;
+            font-weight: 600;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .weight-summary .valid {
+            color: #27ae60;
+        }
+        
+        .weight-summary .invalid {
+            color: #e74c3c;
+        }
+        
+        /* 专家权威性部分 */
+        .authority-section {
+            margin-top: 20px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .authority-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        
+        .authority-table th {
+            background: #3498db;
+            color: white;
+            padding: 12px;
+            text-align: center;
+            font-weight: 600;
+            border: 1px solid #2980b9;
+        }
+        
+        .authority-table td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: center;
+            vertical-align: middle;
+        }
+        
+        .authority-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .authority-option input[type="radio"] {
+            margin-bottom: 5px;
+            transform: scale(1.1);
+        }
+        
+        .familiarity-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+        
+        .familiarity-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        
+        .familiarity-option:hover {
+            background: rgba(52, 152, 219, 0.1);
+        }
+        
+        /* 完成页面 */
+        .completion-section {
+            text-align: center;
+            padding: 50px 20px;
+        }
+        
+        .completion-icon {
+            font-size: 60px;
+            color: #27ae60;
+            margin-bottom: 20px;
+        }
+        
+        .completion-message {
+            font-size: 18px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        /* 加载动画 */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1400px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            .questionnaire-table {
+                font-size: 12px;
+            }
+            
+            .rating-label {
+                font-size: 10px;
+            }
+            
+            .col-evaluation { width: 250px; }
+            .col-comment { width: 180px; }
+        }
+        
+        @media (max-width: 1200px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 15px;
+                overflow-x: auto;
+            }
+            
+            .questionnaire-table {
+                min-width: 1400px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 问卷头部 -->
+        <div class="header">
+            <h1>基于教师发展的小学教师各观测点评价方式及二级指标权重赋值专家函询表（第三轮）</h1>
+            <div class="subtitle">
+                尊敬的专家：您好！为落实《深化新时代教育评价改革总体方案》，破解"五唯"评价顽疾，我校基于CIPP模型，在扎根理论指导下开展指标体系建构，经前两轮专家函询，初步构建了包含4个一级指标、12个二级指标及39个观测点的教师评价框架。诚邀您凭借深厚的专业学识与实践经验，参与第三轮专家函询。
+            </div>
+        </div>
+        
+        <!-- 步骤指示器 -->
+        <div class="step-indicator">
+            <div class="step active" data-step="1">
+                <div class="step-circle">1</div>
+                <div class="step-label">第一部分<br>观测点评价</div>
+            </div>
+            <div class="step" data-step="2">
+                <div class="step-circle">2</div>
+                <div class="step-label">第二部分<br>权重赋值</div>
+            </div>
+            <div class="step" data-step="3">
+                <div class="step-circle">3</div>
+                <div class="step-label">第三部分<br>专家信息</div>
+            </div>
+            <div class="step" data-step="4">
+                <div class="step-circle">4</div>
+                <div class="step-label">第四部分<br>权威性调查</div>
+            </div>
+            <div class="step" data-step="5">
+                <div class="step-circle">✓</div>
+                <div class="step-label">完成提交</div>
+            </div>
+        </div>
+        
+        <!-- 步骤1：第一部分观测点评价 -->
+        <div class="step-content active" id="step1">
+            <div class="instructions">
+                <p><strong>第一部分填表说明：</strong></p>
+                <p>1. 请对每个观测点评价方式的认可程度进行评判，1-5分依次对应"非常不同意（1分）""比较不同意（2分）""一般同意（3分）""比较同意（4分）""非常同意（5分）"，请在对应分值下打"√"，每题限选1项。</p>
+                <p>2. 若认为现有评价方式不合理，请在"修改意见"栏填写具体替代方案及理由；若同意则无需填写。</p>
+            </div>
+            
+            <!-- 问卷表格 -->
+            <div id="questionnaireTable"></div>
+            
+            <div class="navigation-buttons">
+                <button class="nav-btn prev" disabled>上一步</button>
+                <button class="nav-btn next" onclick="goToStep(2)">下一步：权重赋值</button>
+            </div>
+        </div>
+        
+        <!-- 步骤2：第二部分权重赋值 -->
+        <div class="step-content" id="step2">
+            <div class="instructions">
+                <p><strong>第二部分填表说明：</strong></p>
+                <p>1. 根据伯利纳的教学专长教师发展阶段理论，本研究将教师专业发展划分为五个阶段。请为每个发展阶段的二级指标赋予权重（用百分数表示），同一一级指标下各二级指标分值之和需精确等于100%。</p>
+            </div>
+            
+            <!-- 发展阶段标签页 -->
+            <div class="stage-tabs" id="stageTabs"></div>
+            
+            <!-- 权重表格 -->
+            <div id="weightsTable"></div>
+            
+            <!-- 权重汇总 -->
+            <div class="weight-summary" id="weightSummary">
+                <span>当前阶段权重总和: <span id="totalWeight">0</span>%</span>
+                <span id="weightStatus" class="invalid">请调整至100%</span>
+            </div>
+            
+            <div class="navigation-buttons">
+                <button class="nav-btn prev" onclick="goToStep(1)">上一步</button>
+                <button class="nav-btn next" onclick="goToStep(3)">下一步：专家信息</button>
+            </div>
+        </div>
+        
+        <!-- 步骤3：第三部分专家信息 -->
+        <div class="step-content" id="step3">
+            <div class="instructions">
+                <p><strong>第三部分：专家基本信息调查表</strong></p>
+            </div>
+            
+            <div class="expert-info-section">
+                <div class="expert-form">
+                    <div class="form-group">
+                        <label for="gender" class="required">性别</label>
+                        <select id="gender" required>
+                            <option value="">请选择</option>
+                            <option value="男">男</option>
+                            <option value="女">女</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="age" class="required">年龄</label>
+                        <input type="number" id="age" min="20" max="80" placeholder="请输入年龄" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="education" class="required">最高学历</label>
+                        <select id="education" required>
+                            <option value="">请选择</option>
+                            <option value="专科">专科</option>
+                            <option value="本科">本科</option>
+                            <option value="硕士">硕士</option>
+                            <option value="博士">博士</option>
+                            <option value="其他">其他</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="title" class="required">职称（职务）</label>
+                        <input type="text" id="title" placeholder="请输入职称或职务" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="workYears" class="required">工作年限</label>
+                        <input type="number" id="workYears" min="0" max="60" placeholder="请输入工作年限" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="workField" class="required">工作领域</label>
+                        <select id="workField" required>
+                            <option value="">请选择</option>
+                            <option value="教育管理">教育管理</option>
+                            <option value="教学一线">教学一线</option>
+                            <option value="教育研究">教育研究</option>
+                            <option value="其他">其他</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="navigation-buttons">
+                <button class="nav-btn prev" onclick="goToStep(2)">上一步</button>
+                <button class="nav-btn next" onclick="goToStep(4)">下一步：权威性调查</button>
+            </div>
+        </div>
+        
+        <!-- 步骤4：第四部分专家权威性调查 -->
+        <div class="step-content" id="step4">
+            <div class="instructions">
+                <p><strong>第四部分：专家权威性调查表</strong></p>
+                <p>说明：本部分用于评估专家的权威程度，您填写的"判断依据"与"熟悉程度"将用于计算权威系数，敬请根据实际情况如实勾选。</p>
+            </div>
+            
+            <div class="authority-section">
+                <p><strong>1. 您对咨询内容的判断依据</strong>（判断依据按程度分为大、中、小三级，根据您的实际情况，请在您认为合适的选项下选择）</p>
+                
+                <table class="authority-table">
+                    <thead>
+                        <tr>
+                            <th>判断依据</th>
+                            <th>大</th>
+                            <th>中</th>
+                            <th>小</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>理论分析</td>
+                            <td><label class="authority-option"><input type="radio" name="theory" value="大"></label></td>
+                            <td><label class="authority-option"><input type="radio" name="theory" value="中"></label></td>
+                            <td><label class="authority-option"><input type="radio" name="theory" value="小"></label></td>
+                        </tr>
+                        <tr>
+                            <td>实践经验</td>
+                            <td><label class="authority-option"><input type="radio" name="practice" value="大"></label></td>
+                            <td><label class="authority-option"><input type="radio" name="practice" value="中"></label></td>
+                            <td><label class="authority-option"><input type="radio" name="practice" value="小"></label></td>
+                        </tr>
+                        <tr>
+                            <td>对国内外相关研究的了解</td>
+                            <td><label class="authority-option"><input type="radio" name="research" value="大"></label></td>
+                            <td><label class="authority-option"><input type="radio" name="research" value="中"></label></td>
+                            <td><label class="authority-option"><input type="radio" name="research" value="小"></label></td>
+                        </tr>
+                        <tr>
+                            <td>个人专业直觉</td>
+                            <td><label class="authority-option"><input type="radio" name="intuition" value="大"></label></td>
+                            <td><label class="authority-option"><input type="radio" name="intuition" value="中"></label></td>
+                            <td><label class="authority-option"><input type="radio" name="intuition" value="小"></label></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <p style="margin-top: 25px;"><strong>2. 您对咨询内容的熟悉程度</strong>（熟悉程度从"很熟悉"到"很不熟悉"分为5级）</p>
+                <div class="familiarity-group">
+                    <label class="familiarity-option">
+                        <input type="radio" name="familiarity" value="很熟悉">
+                        <span>很熟悉</span>
+                    </label>
+                    <label class="familiarity-option">
+                        <input type="radio" name="familiarity" value="熟悉">
+                        <span>熟悉</span>
+                    </label>
+                    <label class="familiarity-option">
+                        <input type="radio" name="familiarity" value="一般">
+                        <span>一般</span>
+                    </label>
+                    <label class="familiarity-option">
+                        <input type="radio" name="familiarity" value="不熟悉">
+                        <span>不熟悉</span>
+                    </label>
+                    <label class="familiarity-option">
+                        <input type="radio" name="familiarity" value="很不熟悉">
+                        <span>很不熟悉</span>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="navigation-buttons">
+                <button class="nav-btn prev" onclick="goToStep(3)">上一步</button>
+                <button class="nav-btn submit" onclick="submitForm()">提交问卷</button>
+            </div>
+        </div>
+        
+        <!-- 步骤5：完成页面 -->
+        <div class="step-content" id="step5">
+            <div class="completion-section">
+                <div class="completion-icon">✓</div>
+                <h2 style="color: #27ae60; margin-bottom: 20px;">问卷提交成功！</h2>
+                <div class="completion-message">
+                    感谢您参与本次专家函询！<br>
+                    您的宝贵意见对完善教师评价体系至关重要。<br>
+                    问卷已成功提交，感谢您的支持！
+                </div>
+                <div style="margin-top: 30px;">
+                    <p style="color: #7f8c8d; font-size: 14px;">
+                        提交时间：<span id="completionTime"></span><br>
+                        如需重新填写，请刷新页面
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 加载动画 -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>正在提交数据...</p>
+        </div>
+    </div>
+
+    <script>
+        // 完整的39个观测点数据
+        const questionnaireData = [
+            // A.背景评价 - A1基础素养与需求适配度
+            { id: "A1-1", level1: "A.背景评价", level2: "A1基础素养与需求适配度", observation: "A1-1学历资格匹配", evaluationMethod: "A1-1-1核查学历档案赋分" },
+            { id: "A1-2", level1: "A.背景评价", level2: "A1基础素养与需求适配度", observation: "A1-2教育教学时长", evaluationMethod: "A1-2-1查阅人事档案中工作年限记录赋分" },
+            { id: "A1-3", level1: "A.背景评价", level2: "A1基础素养与需求适配度", observation: "A1-3专业技术职级匹配", evaluationMethod: "A1-3-1核查职称、骨干资质等赋分" },
+            { id: "A1-4", level1: "A.背景评价", level2: "A1基础素养与需求适配度", observation: "A1-4信息技术达标", evaluationMethod: "A1-4-1根据信息技术数字化能力考核等级赋分" },
+            // A2教育理念与学校价值观契合度
+            { id: "A2-1", level1: "A.背景评价", level2: "A2教育理念与学校价值观契合度", observation: "A2-1教育理念理解", evaluationMethod: "A2-1-1质性评价（课堂诊断、案例观察、互评等）" },
+            { id: "A2-2", level1: "A.背景评价", level2: "A2教育理念与学校价值观契合度", observation: "A2-2学校教育理念认同", evaluationMethod: "A2-2-1质性评价（课堂诊断、案例观察、互评等）" },
+            { id: "A2-3", level1: "A.背景评价", level2: "A2教育理念与学校价值观契合度", observation: "A2-3个人发展规划及学期计划", evaluationMethod: "A2-3-1质性评价（研讨评估）" },
+            // A3教育环境适配度
+            { id: "A3-1", level1: "A.背景评价", level2: "A3教育环境适配度", observation: "A3-1生源差异的识别与应对", evaluationMethod: "A3-1-1质性评价（培优辅潜、学情分析、课堂诊断、案例观察、互评等）" },
+            { id: "A3-2", level1: "A.背景评价", level2: "A3教育环境适配度", observation: "A3-2教育资源的适应与运用", evaluationMethod: "A3-2-1质性评价（课堂诊断、案例观察、活动参与、互评等）" },
+            // B.输入评价 - B1专业素养与发展
+            { id: "B1-1", level1: "B.输入评价", level2: "B1专业素养与发展", observation: "B1-1师德师风", evaluationMethod: "B1-1-1根据文件考核（具备一票否决性）" },
+            { id: "B1-2", level1: "B.输入评价", level2: "B1专业素养与发展", observation: "B1-2学科素养", evaluationMethod: "B1-2-1量化（学科专业知识测试、教学比武等）与质性评价（课堂诊断、案例观察、互评等）结合" },
+            // B2专业学习与成长
+            { id: "B2-1", level1: "B.输入评价", level2: "B2专业学习与成长", observation: "B2-1研修培训", evaluationMethod: "B2-1-1量化评价（继续教育学时，校本研修参与度等）" },
+            { id: "B2-2", level1: "B.输入评价", level2: "B2专业学习与成长", observation: "B2-2反思实践", evaluationMethod: "B2-2-1质性评价（培训心得、研讨交流、教学反思等）" },
+            // C.过程评价 - C1教学常规执行
+            { id: "C1-1", level1: "C.过程评价", level2: "C1教学常规执行", observation: "C1-1教育教学完成度统计", evaluationMethod: "C1-1-1量化评价（教育教学工作量统计）" },
+            { id: "C1-2", level1: "C.过程评价", level2: "C1教学常规执行", observation: "C1-2课前筹备规范", evaluationMethod: "C1-2-1量化与质性评价（伏案工作检查与反馈）" },
+            { id: "C1-3", level1: "C.过程评价", level2: "C1教学常规执行", observation: "C1-3课堂教学规范", evaluationMethod: "C1-3-1质性评价（课堂诊断、案例观察、互评等）" },
+            { id: "C1-4", level1: "C.过程评价", level2: "C1教学常规执行", observation: "C1-4课后落实规范", evaluationMethod: "C1-4-1质性评价（作业批改检查、培优辅潜落实情况）" },
+            // C2教科研与教学创新实践
+            { id: "C2-1", level1: "C.过程评价", level2: "C2教科研与教学创新实践", observation: "C2-1学科团队活动", evaluationMethod: "C2-1-1量化评价（出勤率等）与质性评价（承担任务等）结合" },
+            { id: "C2-2", level1: "C.过程评价", level2: "C2教科研与教学创新实践", observation: "C2-2工作室活动", evaluationMethod: "C2-2-1量化评价（出勤率等）与质性评价（承担任务等）结合" },
+            { id: "C2-3", level1: "C.过程评价", level2: "C2教科研与教学创新实践", observation: "C2-3青蓝工程", evaluationMethod: "C2-3-1质性评价（审核结对过程记录表，并评估成效案例）" },
+            { id: "C2-4", level1: "C.过程评价", level2: "C2教科研与教学创新实践", observation: "C2-4教改项目参与", evaluationMethod: "C2-4-1量化评价（参与项目的级别与数量）质性评价（承担的具体角色与贡献度）结合" },
+            { id: "C2-5", level1: "C.过程评价", level2: "C2教科研与教学创新实践", observation: "C2-5课题研究与课程建设", evaluationMethod: "C2-5-1量化与质性评价结合（评估其主持/参与课题的级别和承担的任务）" },
+            // C3专业协作与资源共享
+            { id: "C3-1", level1: "C.过程评价", level2: "C3专业协作与资源共享", observation: "C3-1中心项目协作", evaluationMethod: "C3-1-1量化与质性评价结合（承担任务情况）" },
+            { id: "C3-2", level1: "C.过程评价", level2: "C3专业协作与资源共享", observation: "C3-2年级项目共享", evaluationMethod: "C3-2-1量化与质性评价结合（在年级项目活动中承担任务情况）" },
+            { id: "C3-3", level1: "C.过程评价", level2: "C3专业协作与资源共享", observation: "C3-3社团工会参与", evaluationMethod: "C3-3-1量化与质性评价结合（组织或参与活动的情况）" },
+            // D.成果评价 - D1学生综合素质发展
+            { id: "D1-1", level1: "D.成果评价", level2: "D1学生综合素质发展", observation: "D1-1品德涵养", evaluationMethod: "D1-1-1质性评价（润美班级管理、教学述评）" },
+            { id: "D1-2", level1: "D.成果评价", level2: "D1学生综合素质发展", observation: "D1-2知识能力", evaluationMethod: "D1-2-1质性与量化评价结合（教学述评、学业成绩、素养检测等质量分析）" },
+            { id: "D1-3", level1: "D.成果评价", level2: "D1学生综合素质发展", observation: "D1-3身心健康", evaluationMethod: "D1-3-1质性与量化评价结合（教学述评、学生体质健康测试达标情况、心理健康筛查报告）" },
+            { id: "D1-4", level1: "D.成果评价", level2: "D1学生综合素质发展", observation: "D1-4审美素养", evaluationMethod: "D1-4-1质性与量化评价结合（教学述评、艺术类比赛中的获奖等级与数量）" },
+            { id: "D1-5", level1: "D.成果评价", level2: "D1学生综合素质发展", observation: "D1-5劳动实践", evaluationMethod: "D1-5-1质性评价（教学述评、学生劳动成果展示、劳动课开展、劳动实践作业）" },
+            { id: "D1-6", level1: "D.成果评价", level2: "D1学生综合素质发展", observation: "D1-6创新人才培养", evaluationMethod: "D1-6-1质性与量化评价结合（教学述评、学生参加创新类比赛中的获奖级别与等第）" },
+            // D2自身专业成就与团队建设贡献
+            { id: "D2-1", level1: "D.成果评价", level2: "D2自身专业成就与团队建设贡献", observation: "D2-1教学能力与专业竞赛", evaluationMethod: "D2-1-1量化评价（教学比赛获奖的级别与等第）" },
+            { id: "D2-2", level1: "D.成果评价", level2: "D2自身专业成就与团队建设贡献", observation: "D2-2科研能力与学术成果", evaluationMethod: "D2-2-1量化评价（课题、论文、项目、专著等成果级别、数量）" },
+            { id: "D2-3", level1: "D.成果评价", level2: "D2自身专业成就与团队建设贡献", observation: "D2-3专业影响力与职业荣誉", evaluationMethod: "D2-3-1量化评价（参与讲座及获得荣誉级别）" },
+            { id: "D2-4", level1: "D.成果评价", level2: "D2自身专业成就与团队建设贡献", observation: "D2-4双向选聘执行", evaluationMethod: "D2-4-1质性评价（参与双向选聘情况）" },
+            { id: "D2-5", level1: "D.成果评价", level2: "D2自身专业成就与团队建设贡献", observation: "D2-5帮扶赋能成效", evaluationMethod: "D2-5-1质性评价（帮扶成效）" },
+            // D3学校组织发展
+            { id: "D3-1", level1: "D.成果评价", level2: "D3学校组织发展", observation: "D3-1学校教育理念执行", evaluationMethod: "D3-1-1质性评价（教学述评、课堂诊断、案例观察、活动参与、互评等形式评估与学校核心目标的契合度）" },
+            { id: "D3-2", level1: "D.成果评价", level2: "D3学校组织发展", observation: "D3-2校园文化践行", evaluationMethod: "D3-2-1质性评价（教学述评、课堂诊断、案例观察、活动参与、互评等形式评估）" },
+            // D4同行和社会认可度
+            { id: "D4-1", level1: "D.成果评价", level2: "D4同行和社会认可度（自评、同行评、学生评、家长评）", observation: "D4-1满意度测评", evaluationMethod: "D4-1-1量化评价（每学年开展多主体（自评、同行、学生、家长）匿名问卷测评，内容涉及以上各观测点，根据满意度赋分）" }
+        ];
+
+        // 权重指标数据
+        const indicators = [
+            { id: "A1", level1: "A.背景评价", level2: "A1基础素养与需求适配度", group: "background" },
+            { id: "A2", level1: "A.背景评价", level2: "A2教育理念与学校价值观契合度", group: "background" },
+            { id: "A3", level1: "A.背景评价", level2: "A3教育环境适配度", group: "background" },
+            { id: "B1", level1: "B.输入评价", level2: "B1专业素养与发展", group: "input" },
+            { id: "B2", level1: "B.输入评价", level2: "B2专业学习与成长", group: "input" },
+            { id: "C1", level1: "C.过程评价", level2: "C1教学常规执行", group: "process" },
+            { id: "C2", level1: "C.过程评价", level2: "C2教科研与教学创新实践", group: "process" },
+            { id: "C3", level1: "C.过程评价", level2: "C3专业协作与资源共享", group: "process" },
+            { id: "D1", level1: "D.成果评价", level2: "D1学生综合素质发展", group: "result" },
+            { id: "D2", level1: "D.成果评价", level2: "D2自身专业成就与团队建设贡献", group: "result" },
+            { id: "D3", level1: "D.成果评价", level2: "D3学校组织发展", group: "result" },
+            { id: "D4", level1: "D.成果评价", level2: "D4同行和社会认可度", group: "result" }
+        ];
+
+        // 发展阶段
+        const stages = [
+            { id: 0, name: "新手型教师" },
+            { id: 1, name: "进阶型教师" },
+            { id: 2, name: "胜任型教师" },
+            { id: 3, name: "熟练型教师" },
+            { id: 4, name: "专家型教师" }
+        ];
+
+        // 全局变量
+        let currentStep = 1;
+        let currentStage = 0;
+        let responseData = {
+            expertInfo: {},
+            authorityInfo: {},
+            part1: {},
+            part2: { 0: {}, 1: {}, 2: {}, 3: {}, 4: {} },
+            timestamp: null
+        };
+
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            renderQuestionnaireTable();
+            renderStageTabs();
+            renderWeightsTable();
+            updateStepIndicator();
+            
+            // 初始化权重为0
+            initializeWeightsToZero();
+        });
+
+        // 跳转到指定步骤
+        function goToStep(step) {
+            // 验证当前步骤
+            if (!validateCurrentStep()) {
+                return;
+            }
+            
+            // 保存当前步骤数据
+            saveCurrentStepData();
+            
+            // 切换到新步骤
+            document.querySelectorAll('.step-content').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.getElementById('step' + step).classList.add('active');
+            
+            currentStep = step;
+            updateStepIndicator();
+        }
+
+        // 更新步骤指示器
+        function updateStepIndicator() {
+            document.querySelectorAll('.step').forEach(el => {
+                const stepNum = parseInt(el.dataset.step);
+                el.classList.remove('active', 'completed');
+                
+                if (stepNum === currentStep) {
+                    el.classList.add('active');
+                } else if (stepNum < currentStep) {
+                    el.classList.add('completed');
+                }
+            });
+        }
+
+        // 验证当前步骤
+        function validateCurrentStep() {
+            switch(currentStep) {
+                case 1: // 第一部分验证
+                    return validatePart1();
+                case 2: // 第二部分验证
+                    return validatePart2();
+                case 3: // 第三部分验证
+                    return validatePart3();
+                case 4: // 第四部分验证
+                    return validatePart4();
+            }
+            return true;
+        }
+
+        // 验证第一部分
+        function validatePart1() {
+            const missingScores = [];
+            questionnaireData.forEach(item => {
+                const radio = document.querySelector(`input[name="rating_${item.id}"]:checked`);
+                if (!radio) {
+                    missingScores.push(item.observation);
+                }
+            });
+            
+            if (missingScores.length > 0) {
+                alert(`请为所有观测点进行评分！\n还有${missingScores.length}个观测点未评分。`);
+                return false;
+            }
+            return true;
+        }
+
+        // 验证第二部分
+        function validatePart2() {
+            // 检查每个发展阶段
+            for (let i = 0; i < stages.length; i++) {
+                const weights = responseData.part2[i] || {};
+                let total = 0;
+                Object.values(weights).forEach(value => {
+                    total += parseFloat(value) || 0;
+                });
+                
+                if (Math.abs(total - 100) > 0.1) {
+                    alert(`【${stages[i].name}】的权重总和必须为100%\n当前为${total.toFixed(1)}%，请调整！`);
+                    
+                    // 切换到该阶段
+                    if (currentStage !== i) {
+                        switchStage(i);
+                    }
+                    
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        // 验证第三部分
+        function validatePart3() {
+            const requiredFields = [
+                { id: 'gender', name: '性别' },
+                { id: 'age', name: '年龄' },
+                { id: 'education', name: '最高学历' },
+                { id: 'title', name: '职称（职务）' },
+                { id: 'workYears', name: '工作年限' },
+                { id: 'workField', name: '工作领域' }
+            ];
+            
+            for (const field of requiredFields) {
+                const value = document.getElementById(field.id).value.trim();
+                if (!value) {
+                    alert(`请填写【${field.name}】`);
+                    document.getElementById(field.id).focus();
+                    return false;
+                }
+            }
+            
+            // 验证年龄和工作年限
+            const age = parseInt(document.getElementById('age').value);
+            const workYears = parseInt(document.getElementById('workYears').value);
+            
+            if (age < 20 || age > 80) {
+                alert('年龄应在20-80岁之间');
+                return false;
+            }
+            
+            if (workYears < 0 || workYears > 60) {
+                alert('工作年限应在0-60年之间');
+                return false;
+            }
+            
+            if (workYears > age - 20) {
+                alert('工作年限不能大于（年龄-20）');
+                return false;
+            }
+            
+            return true;
+        }
+
+        // 验证第四部分
+        function validatePart4() {
+            const authorityFields = ['theory', 'practice', 'research', 'intuition', 'familiarity'];
+            for (const field of authorityFields) {
+                if (!getRadioValue(field)) {
+                    alert('请完整填写专家权威性调查表的所有选项。');
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        // 保存当前步骤数据
+        function saveCurrentStepData() {
+            switch(currentStep) {
+                case 1:
+                    savePart1Data();
+                    break;
+                case 2:
+                    savePart2Data();
+                    break;
+                case 3:
+                    savePart3Data();
+                    break;
+                case 4:
+                    savePart4Data();
+                    break;
+            }
+        }
+
+        // 保存第一部分数据
+        function savePart1Data() {
+            responseData.part1 = {};
+            questionnaireData.forEach(item => {
+                const radio = document.querySelector(`input[name="rating_${item.id}"]:checked`);
+                const comment = document.querySelector(`textarea[data-id="${item.id}"]`);
+                
+                responseData.part1[item.id] = {
+                    score: radio ? parseInt(radio.value) : null,
+                    comment: comment ? comment.value.trim() : ''
+                };
+            });
+        }
+
+        // 保存第二部分数据
+        function savePart2Data() {
+            // 数据已经在更新权重时自动保存到 responseData.part2
+        }
+
+        // 保存第三部分数据
+        function savePart3Data() {
+            responseData.expertInfo = {
+                gender: document.getElementById('gender').value,
+                age: document.getElementById('age').value,
+                education: document.getElementById('education').value,
+                title: document.getElementById('title').value,
+                workYears: document.getElementById('workYears').value,
+                workField: document.getElementById('workField').value,
+                submissionTime: new Date().toLocaleString('zh-CN')
+            };
+        }
+
+        // 保存第四部分数据
+        function savePart4Data() {
+            responseData.authorityInfo = {
+                theory: getRadioValue('theory'),
+                practice: getRadioValue('practice'),
+                research: getRadioValue('research'),
+                intuition: getRadioValue('intuition'),
+                familiarity: getRadioValue('familiarity')
+            };
+        }
+
+        // 获取单选按钮的值
+        function getRadioValue(name) {
+            const radio = document.querySelector(`input[name="${name}"]:checked`);
+            return radio ? radio.value : null;
+        }
+
+        // 渲染问卷表格
+        function renderQuestionnaireTable() {
+            const tableContainer = document.getElementById('questionnaireTable');
+            
+            let html = `
+                <table class="questionnaire-table">
+                    <thead>
+                        <tr>
+                            <th rowspan="2" class="col-level1">一级指标</th>
+                            <th rowspan="2" class="col-level2">二级指标</th>
+                            <th rowspan="2" class="col-observation">观测点</th>
+                            <th rowspan="2" class="col-evaluation">评价方式</th>
+                            <th colspan="5">同意程度</th>
+                            <th rowspan="2" class="col-comment">修改意见</th>
+                        </tr>
+                        <tr>
+                            <th class="col-rating">非常同意<br>5分</th>
+                            <th class="col-rating">比较同意<br>4分</th>
+                            <th class="col-rating">一般同意<br>3分</th>
+                            <th class="col-rating">比较不同意<br>2分</th>
+                            <th class="col-rating">非常不同意<br>1分</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            questionnaireData.forEach((item, index) => {
+                const isFirstInLevel2 = index === 0 || questionnaireData[index-1].level2 !== item.level2;
+                const isFirstInLevel1 = index === 0 || questionnaireData[index-1].level1 !== item.level1;
+                
+                html += `
+                    <tr>
+                        ${isFirstInLevel1 ? `<td rowspan="4" class="level-1">${item.level1}</td>` : ''}
+                        ${isFirstInLevel2 ? `<td rowspan="${getLevel2Rowspan(index)}" class="level-2">${item.level2}</td>` : ''}
+                        <td class="level-3">${item.observation}</td>
+                        <td class="evaluation-method">${item.evaluationMethod}</td>
+                        ${[5,4,3,2,1].map(score => `
+                            <td class="rating-cell">
+                                <label class="rating-option">
+                                    <input type="radio" name="rating_${item.id}" value="${score}">
+                                    <span class="rating-label">${score}分</span>
+                                </label>
+                            </td>
+                        `).join('')}
+                        <td>
+                            <textarea class="comment-input" data-id="${item.id}" 
+                                      placeholder="如有修改意见请填写..."></textarea>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += '</tbody></table>';
+            tableContainer.innerHTML = html;
+        }
+
+        // 计算二级指标行跨度
+        function getLevel2Rowspan(index) {
+            const level2 = questionnaireData[index].level2;
+            let count = 0;
+            for (let i = 0; i < questionnaireData.length; i++) {
+                if (questionnaireData[i].level2 === level2) {
+                    count++;
+                }
+            }
+            return count;
+        }
+
+        // 初始化权重为0
+        function initializeWeightsToZero() {
+            for (let stage = 0; stage < 5; stage++) {
+                indicators.forEach(indicator => {
+                    responseData.part2[stage][indicator.id] = 0;
+                });
+            }
+            renderWeightsTable();
+        }
+
+        // 渲染发展阶段标签页
+        function renderStageTabs() {
+            const tabsContainer = document.getElementById('stageTabs');
+            tabsContainer.innerHTML = stages.map((stage, index) => `
+                <div class="stage-tab ${index === currentStage ? 'active' : ''}" 
+                     data-index="${index}" onclick="switchStage(${index})">
+                    ${stage.name}
+                </div>
+            `).join('');
+        }
+
+        // 渲染权重表格
+        function renderWeightsTable() {
+            const weightsContainer = document.getElementById('weightsTable');
+            
+            // 按一级指标分组
+            const groups = {};
+            indicators.forEach(indicator => {
+                if (!groups[indicator.level1]) {
+                    groups[indicator.level1] = [];
+                }
+                groups[indicator.level1].push(indicator);
+            });
+
+            let html = '';
+            for (const [level1, groupIndicators] of Object.entries(groups)) {
+                const rowspan = groupIndicators.length;
+                
+                html += groupIndicators.map((indicator, idx) => `
+                    <tr>
+                        ${idx === 0 ? `<td rowspan="${rowspan}" class="level-1">${indicator.level1}</td>` : ''}
+                        <td class="level-2">${indicator.level2}</td>
+                        <td style="text-align: center;">
+                            <input type="number" 
+                                   class="weight-input" 
+                                   data-id="${indicator.id}"
+                                   value="${responseData.part2[currentStage][indicator.id] || 0}"
+                                   min="0" max="100" step="0.1"
+                                   onchange="updateWeight('${indicator.id}', this.value)"
+                                   oninput="updateWeight('${indicator.id}', this.value)">
+                        </td>
+                    </tr>
+                `).join('');
+            }
+
+            weightsContainer.innerHTML = `
+                <table class="weights-table">
+                    <thead>
+                        <tr>
+                            <th>一级指标</th>
+                            <th>二级指标</th>
+                            <th>权重(%)</th>
+                        </tr>
+                    </thead>
+                    <tbody>${html}</tbody>
+                </table>
+            `;
+            
+            updateWeightSummary();
+        }
+
+        // 切换发展阶段
+        function switchStage(stageIndex) {
+            currentStage = stageIndex;
+            
+            // 更新标签页状态
+            document.querySelectorAll('.stage-tab').forEach((tab, index) => {
+                tab.classList.toggle('active', index === stageIndex);
+            });
+            
+            // 重新渲染权重表格
+            renderWeightsTable();
+        }
+
+        // 更新权重值
+        function updateWeight(indicatorId, value) {
+            const numValue = parseFloat(value) || 0;
+            responseData.part2[currentStage][indicatorId] = numValue;
+            updateWeightSummary();
+        }
+
+        // 更新权重汇总
+        function updateWeightSummary() {
+            const weights = responseData.part2[currentStage] || {};
+            let total = 0;
+            
+            Object.values(weights).forEach(value => {
+                total += parseFloat(value) || 0;
+            });
+            
+            const totalElement = document.getElementById('totalWeight');
+            const statusElement = document.getElementById('weightStatus');
+            
+            totalElement.textContent = total.toFixed(1);
+            
+            if (Math.abs(total - 100) < 0.1) {
+                statusElement.textContent = '✓ 符合要求';
+                statusElement.className = 'valid';
+            } else {
+                statusElement.textContent = `✗ 请调整至100%`;
+                statusElement.className = 'invalid';
+            }
+        }
+
+        // 提交表单
+        async function submitForm() {
+            // 验证第四部分
+            if (!validatePart4()) {
+                return;
+            }
+            
+            // 保存第四部分数据
+            savePart4Data();
+            
+            // 添加时间戳
+            responseData.timestamp = new Date().toISOString();
+            
+            // 显示加载动画
+            document.getElementById('loading').style.display = 'block';
+            
+            try {
+                // 保存到本地存储（临时方案）
+                saveToLocalStorage();
+                
+                // 模拟提交过程
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                // 显示完成页面
+                goToStep(5);
+                document.getElementById('completionTime').textContent = new Date().toLocaleString('zh-CN');
+                
+                console.log('提交的数据：', responseData);
+                
+            } catch (error) {
+                alert('提交失败，请稍后重试。错误信息：' + error.message);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        // 保存到本地存储（临时方案）
+        function saveToLocalStorage() {
+            // 获取现有的问卷数据
+            let allResponses = JSON.parse(localStorage.getItem('surveyResponses') || '[]');
+            
+            // 添加新的问卷数据
+            allResponses.push(responseData);
+            
+            // 保存回本地存储
+            localStorage.setItem('surveyResponses', JSON.stringify(allResponses));
+            
+            console.log('数据已保存到本地存储，当前共有', allResponses.length, '条记录');
+        }
+    </script>
+</body>
+</html>
